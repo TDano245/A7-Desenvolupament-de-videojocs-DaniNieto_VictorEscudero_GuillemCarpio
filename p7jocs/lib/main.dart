@@ -19,9 +19,9 @@ class SpaceShooterGame extends FlameGame
   Future<void> onLoad() async {
     final parallax = await loadParallaxComponent(
       [
-        ParallaxImageData('images/stars_0.png'),
-        ParallaxImageData('images/stars_1.png'),
-        ParallaxImageData('images/stars_2.png'),
+        ParallaxImageData('stars_0.png'),
+        ParallaxImageData('stars_1.png'),
+        ParallaxImageData('stars_2.png'),
       ],
       baseVelocity: Vector2(0, -5),
       repeat: ImageRepeat.repeat,
@@ -74,7 +74,7 @@ class Player extends SpriteAnimationComponent
     await super.onLoad();
 
     animation = await game.loadSpriteAnimation(
-      'images/player.png',
+      'player.png',
       SpriteAnimationData.sequenced(
         amount: 4,
         stepTime: 0.2,
@@ -130,7 +130,7 @@ class Bullet extends SpriteAnimationComponent
     await super.onLoad();
 
     animation = await game.loadSpriteAnimation(
-      'images/bullet.png',
+      'bullet.png',
       SpriteAnimationData.sequenced(
         amount: 4,
         stepTime: 0.2,
@@ -173,7 +173,7 @@ class Enemy extends SpriteAnimationComponent
     await super.onLoad();
 
     animation = await game.loadSpriteAnimation(
-      'images/enemy.png',
+      'enemy.png',
       SpriteAnimationData.sequenced(
         amount: 4,
         stepTime: 0.2,
@@ -225,7 +225,7 @@ class Explosion extends SpriteAnimationComponent
     await super.onLoad();
 
     animation = await game.loadSpriteAnimation(
-      'images/explosion.png',
+      'explosion.png',
       SpriteAnimationData.sequenced(
         amount: 6,
         stepTime: 0.1,
