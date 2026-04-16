@@ -1,150 +1,108 @@
-# exercici5
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+MEMÒRIA PRÀCTICA APIs I SERVEIS
 
 
-# Exercici6
+EXERCICI 1: Accés a un servei API
 
-EJERCICIO 6 – JUEGO DE PRUEBAS FUNCIONALES
+En aquest exercici, he implementat la connexió a una API REST utilitzant Flutter.
 
-¿Qué es Gherkin?
+Primer, he provat l’endpoint de l’API de cotxes mitjançant RapidAPI per veure quin format de dades retornava (JSON). Això m’ha permès entendre l’estructura dels objectes.
 
-Gherkin es un lenguaje que permite definir pruebas funcionales usando lenguaje natural estructurado con las palabras clave: Given, When, Then. Sirve para describir el comportamiento esperado de una aplicación desde el punto de vista del usuario.
+A continuació, he creat la classe CarsModel, que representa els cotxes. Aquesta classe inclou:
 
+- Els atributs: id, year, make, model i type
+- Un constructor amb paràmetres obligatoris
+- Un mètode fromMap per convertir JSON a objecte
+- Un mètode toMap per convertir objecte a JSON
 
+Després, he afegit les funcions per treballar amb JSON, que permeten convertir una llista de JSON en una llista d’objectes CarsModel.
 
-Feature: Cámara
+Seguidament, he creat un servei HTTP (CarHttpService), que s’encarrega de:
 
-Scenario: Hacer una foto correctamente
-  Given que la aplicación está abierta
-  When el usuario pulsa el botón de hacer foto
-  Then se guarda una imagen en el dispositivo
+- Fer la petició GET a l’API
+- Afegir les capçaleres necessàries (API key)
+- Gestionar errors
+- Retornar una llista de cotxes
 
-Scenario: Error sin permisos
-  Given que la aplicación no tiene permisos de cámara
-  When el usuario intenta hacer una foto
-  Then aparece un mensaje de error
+Finalment, he implementat un test unitari, on he comprovat que:
 
-Scenario: Guardado en galería
-  Given que se ha hecho una foto
-  When el usuario abre la galería
-  Then la imagen aparece guardada correctamente
+- La resposta no està buida
+- Hi ha elements a la llista
+- Els objectes tenen dades correctes
 
-
-Feature: Reproductor multimedia
-
-  Scenario: Reproducir audio
-  Given que hay un archivo cargado
-  When el usuario pulsa play
-  Then el audio se reproduce
-
-Scenario: Pausar audio
-  Given que el audio está en reproducción
-  When el usuario pulsa pause
-  Then el audio se detiene
-
-Scenario: Archivo no válido
-  Given que el archivo no es compatible
-  When el usuario intenta reproducirlo
-  Then aparece un error
-
-
-Feature: Cálculo de camisetas
-
-  Scenario: Precio sin descuento
-  Given que el usuario introduce 2 camisetas talla M
-  When no selecciona descuento
-  Then se muestra el precio total
-
-Scenario: Descuento del 10%
-  Given que el usuario introduce 3 camisetas talla L
-  When selecciona descuento del 10%
-  Then el precio final tiene un 10% de descuento
-
-Scenario: Descuento de 20€
-  Given que el precio supera 100€
-  When selecciona descuento tipo 2
-  Then se descuentan 20€ del total
-
-Scenario: Datos incompletos
-  Given que no hay talla seleccionada
-  When el usuario introduce cantidad
-  Then no se muestra el precio
-
-
-RESULTADOS DE LAS PRUEBAS
-
-Número total de pruebas: 10
-Pruebas correctas (OK): 10
-Pruebas incorrectas (KO): 0
-Porcentaje de éxito: 100%
+També he configurat el fitxer AndroidManifest.xml per permetre connexions a internet.
 
 
 
-# Exercici7
+EXERCICI 2: Integració de vista i model
 
-EJERCICIO 7 – Clasificación de pruebas
+En aquest exercici, he creat una interfície gràfica en Flutter per mostrar les dades obtingudes de l’API.
 
-Pruebas de integración
-- Hacer una foto (interacción entre hardware y aplicación)
-- Reproducir audio (interacción entre interfaz y sistema multimedia)
+He utilitzat un FutureBuilder per gestionar la crida asíncrona al servei. Això m’ha permès controlar diferents estats:
 
-Pruebas de regresión
-- Recalcular precio tras modificar descuentos
-- Volver a reproducir audio después de cambios en el código
+- Càrrega de dades (loading)
+- Errors
+- Dades correctes
 
-Pruebas funcionales
-- Calcular precio correctamente
-- Pausar audio
+Per mostrar els resultats, he utilitzat un ListView.builder, que genera una llista dinàmica de cotxes.
 
+Cada element de la llista mostra:
 
-+ Nuevas pruebas añadidas
+- Marca i model del cotxe
+- Any
+- Tipus
 
-Rendimiento
-- La aplicación se inicia en menos de 2 segundos
-- El audio empieza en menos de 1 segundo
+També he millorat la visualització utilitzant Card i icones, per fer la interfície més clara.
 
-Carga
-- Reproducir 50 audios seguidos sin errores
-- Hacer 100 fotos seguidas sin fallos
+En aquest exercici he integrat correctament:
 
-Estrés
-- Uso continuo durante 10 minutos
-- Pulsar play/pause repetidamente muchas veces
-
-Capacidad
-- Soporta múltiples archivos de audio
-- Maneja imágenes de diferentes tamaños
-
-Seguridad
-- No permite usar la cámara sin permisos
-- No acepta archivos no válidos
-
-Uso de recursos
-- Uso de memoria estable
-- CPU no se dispara durante reproducción
+- Model (CarsModel)
+- Servei (CarHttpService)
+- Vista (UI amb Flutter)
 
 
-Respuesta a las preguntas:
 
-¿Cuándo hacer pruebas funcionales?
-Las pruebas funcionales deben realizarse durante el desarrollo, antes de la entrega y antes de pasar la aplicación a producción.
+EXERCICI 3: Aplicació d’acudits
 
-¿Qué porcentaje mínimo de pruebas?
-Se recomienda tener entre un 80% y 90% de cobertura antes de pasar a la siguiente fase.
+En aquest exercici, he desenvolupat una aplicació que consumeix una API d’acudits.
 
-¿Qué hacer con los errores?
-Los errores deben corregirse antes de avanzar. Después de corregirlos, se deben volver a ejecutar las pruebas para asegurar que el problema está solucionado.
+Primer, he creat el model Joke, amb els atributs:
+
+- id
+- setup
+- punchline
+
+Després, he implementat el servei JokeService, que:
+
+- Fa una petició GET a l’API
+- Rep una llista d’acudits
+- Selecciona un acudit aleatori
+
+A continuació, he desenvolupat la interfície amb un StatefulWidget, que permet:
+
+- Mostrar un acudit
+- Actualitzar-lo quan es prem un botó
+
+He afegit un botó flotant (FloatingActionButton), que torna a cridar l’API per obtenir un nou acudit.
+
+També he gestionat l’estat de càrrega amb un indicador visual (CircularProgressIndicator).
+
+
+
+MILLORES I FUNCIONALITATS EXTRES
+
+A més dels requisits bàsics, he implementat millores per fer l’aplicació més completa.
+
+He creat una pantalla de menú (MenuPage) que permet navegar entre:
+
+- La llista de cotxes
+- La pantalla d’acudits
+
+Aquesta navegació s’ha implementat amb Navigator i rutes, permetent una millor experiència d’usuari.
+
+També he organitzat el projecte en carpetes:
+
+- model/
+- services/
+- screens/
+
+Aquesta estructura facilita el manteniment i segueix bones pràctiques de desenvolupament.
