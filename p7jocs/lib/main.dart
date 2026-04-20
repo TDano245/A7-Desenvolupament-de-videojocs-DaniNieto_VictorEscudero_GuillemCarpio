@@ -8,12 +8,215 @@ import 'package:flame/parallax.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(GameWidget(game: SpaceShooterGame()));
+  // Create the game first so we can start it paused and show the main menu overlay.
+  final game = SpaceShooterGame();
+  // Start paused so the menu is visible and the game doesn't run in the background.
+  game.pauseEngine();
+
+  runApp(
+    GameWidget(
+      game: game,
+      overlayBuilderMap: {
+        'MainMenu': (BuildContext ctx, SpaceShooterGame g) {
+          return Center(
+            child: Container(
+              color: Colors.black87,
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('Space Shooter',
+                        style: TextStyle(color: Colors.white, fontSize: 28)),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        g.overlays.remove('MainMenu');
+                        g.resumeGame();
+                      },
+                      child: const Text('Play'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        g.overlays.add('LevelSelect');
+                      },
+                      child: const Text('Select Level'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        g.overlays.add('Settings');
+                      },
+                      child: const Text('Settings'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+        'LevelSelect': (BuildContext ctx, SpaceShooterGame g) {
+          return Center(
+            child: Container(
+              color: Colors.black87,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Select Level',
+                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    children: List.generate(
+                      3,
+                      (i) => ElevatedButton(
+                        onPressed: () {
+                          g.level = i + 1;
+                          // Close level selector and go back to main menu
+                          g.overlays.remove('LevelSelect');
+                        },
+                        child: Text('Level ${i + 1}'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => g.overlays.remove('LevelSelect'),
+                    child: const Text('Back'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        'Settings': (BuildContext ctx, SpaceShooterGame g) {
+          return Center(
+            child: Container(
+              color: Colors.black87,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Settings',
+                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Sound', style: TextStyle(color: Colors.white)),
+                      const SizedBox(width: 12),
+                      Switch(
+                        value: g.soundOn,
+                        onChanged: (v) {
+                          g.soundOn = v;
+                        },
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Music', style: TextStyle(color: Colors.white)),
+                      const SizedBox(width: 12),
+                      Switch(
+                        value: g.musicOn,
+                        onChanged: (v) {
+                          g.musicOn = v;
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => g.overlays.remove('Settings'),
+                    child: const Text('Back'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        'PauseMenu': (BuildContext ctx, SpaceShooterGame g) {
+          return Center(
+            child: Container(
+              color: Colors.black54,
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Paused',
+                      style: TextStyle(color: Colors.white, fontSize: 22)),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      g.overlays.remove('PauseMenu');
+                      g.resumeGame();
+                    },
+                    child: const Text('Resume'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // go back to main menu
+                      g.overlays.remove('PauseMenu');
+                      // pause the engine and show main menu
+                      g.pauseGame();
+                      g.overlays.add('MainMenu');
+                    },
+                    child: const Text('Main Menu'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+        'PauseButton': (BuildContext ctx, SpaceShooterGame g) {
+          return SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FloatingActionButton(
+                  mini: true,
+                  backgroundColor: Colors.black54,
+                  onPressed: () {
+                    // show pause overlay and pause engine
+                    g.overlays.add('PauseMenu');
+                    g.pauseGame();
+                  },
+                  child: const Icon(Icons.pause),
+                ),
+              ),
+            ),
+          );
+        },
+      },
+      // Start with the main menu overlay active
+      initialActiveOverlays: const ['MainMenu'],
+    ),
+  );
 }
 
 class SpaceShooterGame extends FlameGame
     with PanDetector, HasCollisionDetection {
   late Player player;
+  // Game state exposed to overlays
+  int level = 1;
+  bool soundOn = true;
+  bool musicOn = true;
+
+  /// Resume the game engine and show the pause button overlay.
+  void resumeGame() {
+    resumeEngine();
+    overlays.add('PauseButton');
+  }
+
+  /// Pause the game engine and hide the pause button overlay.
+  void pauseGame() {
+    pauseEngine();
+    overlays.remove('PauseButton');
+  }
+  @override
+  Color backgroundColor() => Colors.white;
 
   @override
   Future<void> onLoad() async {
